@@ -16,12 +16,21 @@
 
 ---
 
+## 分区群说明
+
+| 分区 | 群 | cron | GitHub 分区 |
+|---|---|---|---|
+| 配表编辑 | 配置编辑群 | 每晚 21:30 归档 | [配置编辑群] |
+| 数值讨论 | 数值讨论群 | 每晚 21:30 归档 | [数值讨论] |
+| 主 session | 当前群 | 每晚 22:00 归档 | [代码排查][系统设计] |
+
+---
+
 ## [代码排查]
 
 ### 环境信息
 - **SSH Host:** 172.20.160.68 | User: xieyuntian | Port: 22 | OS: Windows
 - **代码仓库:** E:\A2\X3_client
-- **配置表路径:** E:\x3\design\data_dev_siren（当前版本 data_dev_siren）
 - **项目：** X3（A2系列），Unity 客户端 + C# 服务端
 - **仓库结构：** `client/`（Unity）、`server/`（GameServer / GameServer.Hotfix / CenterServer / MapServer）
 
@@ -39,52 +48,20 @@
 
 ---
 
-## [配表]
-
-### 表结构速查
-- **FunctionUnlock：** ID / EnumName / IsOn / SeverLimit / TimeLimit(→TimeCycle.ID) / PlayerLvLimit / ChapterTaskLimit / TaskLimit
-- **TimeCycle：** ID / IsOn / Attribution / TriggerType / StartTime / DurationType / Duration / CycleType / ReOpenTime
-  - TriggerType=2（开服时间）+ Attribution=4（服务器）是最常用的开服天数配置
-  - StartTime 格式：`Nd 00:00:00`，N = 目标天数 - 1（开服第1天=`00:00:00`，第14天=`13d 00:00:00`）
-- **SoldierEquipLevel：** ID / EquipType / SoldierType / EquipLevel / PropType(→BuffID,数值) / UpdateCondition / CostMaterial
-  - SoldierType: 1=猎人 2=射手 3=斗士
-  - PropType 格式：`属性ID,数值|属性ID,数值`
-
-### 已处理配表需求
-
-**2026-03-19：FunctionUnlock 1096 海妖开服第14天解锁**
-- TimeCycle 新增一行：TriggerType=2, Attribution=4, StartTime=`13d 00:00:00`
-- FunctionUnlock 1096 行 TimeLimit 填新 TimeCycle ID
-
-### 复盘
-- 暂无
-
----
-
-## [数值]
-
-### 学习进度
-- 暂无
-
-### 已分析问题
-
-**2026-03-19：射手武器属性 120022（single archer soldiers attack）**
-- 蓝隼火铳 Lv.1 PropType = `120022,1 | 11007,36800`
-- 120022 = 射手单体攻击，数值单位待确认（Property.xlsx 读取失败）
-- 推测为万分比（+1 = +0.01%），待验证
-
-### 复盘
-- 暂无
-
----
-
 ## [系统设计]
 
 ### 立项 / 设计决策记录
-- 暂无
+
+**2026-03-19：OpenClaw 分区群架构设计**
+- 用多个钉钉群做功能分区，每个群专职一个方向
+- 各群 cron 每晚 21:30 归档到 MEMORY.md 对应分区并 push GitHub
+- 主 session cron 每晚 22:00 做全量归档
+- 早上 9:30 检查是否为最新版本，落后则自动 pull
+- GitHub 仓库：https://github.com/TerrorOuO/OpenClaw-Memory
 
 ### 复盘
-- 暂无
+- 跨 session 通信：sessions_list 查不到其他 session，label="main" 路由待验证
+- 两个 session 都显示 key 为 main，真实唯一 key 暂未确认，后续需要测试
 
 ---
 
@@ -92,9 +69,24 @@
 
 ### 群说明
 - 专职处理配表编辑需求，每晚 21:30 自动归档到此分区并 push GitHub
+- 配置表路径：E:\x3\design\data_dev_siren（当前版本 data_dev_siren）
 
 ### 关键内容记录
-- 暂无
+
+**2026-03-19：FunctionUnlock 1096 海妖开服第14天解锁**
+- 需求：开服第14天才能解锁海妖（机甲）系统（SirenMecha）
+- 方案：
+  1. TimeCycle 表新增一行：TriggerType=2, Attribution=4, StartTime=`13d 00:00:00`，IsOn=1
+  2. FunctionUnlock 表 1096 行 TimeLimit 填新增的 TimeCycle ID
+- 注意：StartTime 格式 `Nd 00:00:00`，N = 目标天数 - 1
+
+**表结构速查**
+- **FunctionUnlock：** ID / EnumName / IsOn / SeverLimit / TimeLimit(→TimeCycle.ID) / PlayerLvLimit / ChapterTaskLimit / TaskLimit
+- **TimeCycle：** ID / IsOn / Attribution / TriggerType / StartTime / DurationType / Duration / CycleType / ReOpenTime
+  - TriggerType=2（开服时间）+ Attribution=4（服务器）是最常用的开服天数配置
+- **SoldierEquipLevel：** ID / EquipType / SoldierType / EquipLevel / PropType(→属性ID,数值) / UpdateCondition / CostMaterial
+  - SoldierType: 1=猎人 2=射手 3=斗士
+  - PropType 格式：`属性ID,数值|属性ID,数值`
 
 ### 复盘
 - 暂无
@@ -105,9 +97,15 @@
 
 ### 群说明
 - 专职讨论数值问题，每晚 21:30 自动归档讨论结果到此分区并 push GitHub
+- 哥正在学习数值，讨论时多解释原理
 
 ### 讨论记录
-- 暂无
+
+**2026-03-19：射手武器属性 120022（single archer soldiers attack）**
+- 蓝隼火铳（Azure Falcon Firearm）Lv.1 PropType = `120022,1 | 11007,36800`
+- 120022 = 射手单体攻击属性
+- +1 的数值单位待确认（Property.xlsx 读取失败，推测为万分比，即 +0.01%）
+- 待确认：Property.xlsx 是否有密码保护，120022 的单位定义
 
 ### 复盘
 - 暂无
