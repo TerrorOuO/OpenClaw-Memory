@@ -123,6 +123,31 @@
 
 ---
 
+## 全局工具权限
+
+### Google Sheets 访问
+- **token 路径：** `/root/.openclaw/workspace/google_token.json`
+- **账号：** xieyuntian@nibirutech.com
+- **权限范围：** spreadsheets.readonly
+- **client_secret 路径：** `/root/.openclaw/dingtalk-files/1773929201_client_secret_2_380293845993-4atkpamq39id7q8665m31ek9023tf4ii.apps.googleusercontent.com(1).json`
+- **使用方式：**
+```python
+from google.oauth2.credentials import Credentials
+from googleapiclient.discovery import build
+import json
+
+with open('/root/.openclaw/workspace/google_token.json') as f:
+    t = json.load(f)
+creds = Credentials(token=t['token'], refresh_token=t['refresh_token'],
+    token_uri=t['token_uri'], client_id=t['client_id'],
+    client_secret=t['client_secret'], scopes=t['scopes'])
+service = build('sheets', 'v4', credentials=creds)
+# 读取：service.spreadsheets().values().get(spreadsheetId=ID, range='Sheet名').execute()
+```
+- **注意：** token 会自动用 refresh_token 续期，无需重新授权
+
+---
+
 ## 自我复盘（全局）
 
 - **2026-03-19：** SSH 连接信息未及时记录，导致哥重复提供 → 改进：重要信息当场写入 MEMORY.md
