@@ -2,7 +2,17 @@
 
 Skills define _how_ tools work. This file is for _your_ specifics — the stuff that's unique to your setup.
 
-## What Goes Here
+## 模型分级（按成本/能力）
+
+| 角色 | 当前模型 | 用途 |
+|---|---|---|
+| 轻量 | claude-haiku-4-5 | 子 agent 搜索/归档/SSH读文件/播报 |
+| 默认 | claude-sonnet-4-6 | 主对话、代码排查、配表分析 |
+| 强力 | claude-opus-4-6 | 数值设计、系统设计、立项讨论 |
+
+> 模型换了只改这里，规则不用动。
+
+
 
 Things like:
 
