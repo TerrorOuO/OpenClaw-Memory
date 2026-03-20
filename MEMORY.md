@@ -26,6 +26,7 @@
 | 配表编辑 | 配置编辑群 | 21:00 / 00:00 归档 | [配置编辑群] |
 | 数值讨论 | 数值讨论群 | 21:00 / 00:00 归档 | [数值讨论] |
 | 系统设计 | 系统设计群 | 21:00 / 00:00 归档 | [系统设计] |
+| UI设计 | UI设计群 | 21:00 / 00:00 归档 | [UI设计] |
 | 主 session | 主群 | 21:15 发日报 / 00:30 统一整理 / 09:30 播报 | 全局管理 |
 
 **完整时序：**
@@ -45,7 +46,7 @@
 
 **主 session 职责：**
 - 统筹规划，未明确分区的内容先在主群讨论
-- ⚠️ 固定四个分区：代码排查、配置编辑、数值讨论、系统设计。不得自行新增分区
+- ⚠️ 固定五个分区：代码排查、配置编辑、数值讨论、系统设计、UI设计。不得自行新增分区
 - 新分区只在哥明确说"拉群了"之后，才在后续归档时建立对应分区
 - ⚠️ 各群对话上下文无法真正隔离，需多 bot 实例才能实现
 
@@ -112,6 +113,37 @@
 - **SoldierEquipLevel：** ID / EquipType / SoldierType / EquipLevel / PropType(→属性ID,数值) / UpdateCondition / CostMaterial
   - SoldierType: 1=猎人 2=射手 3=斗士
   - PropType 格式：`属性ID,数值|属性ID,数值`
+
+### 复盘
+- 暂无
+
+---
+
+## [UI设计]
+
+### 群说明
+- 专职处理 UI 设计、UX 交互逻辑输出，以及结合二者生产供客户端使用的 prefab
+- 每晚 21:00 / 00:00 自动归档到此分区并 push GitHub
+- prefab 生成规则：参考分辨率 1080×1920，CanvasScaler ScaleWithScreenSize，Image 组件 guid: c81b19283ff80804a88d4f1bed8bd2ef
+
+### 工作记录
+
+**2026-03-20：UIMechaRepair 修理机甲弹窗**
+- 任务：根据设计图拼接预制体，使用 UILogin 目录下 img_mecha_window_* 资源
+- 产出：Assets/Editor/CreateUIMechaRepair.cs（已推送到 E:\A2\X3_client\client\Assets\Editor\）
+- 执行方式：Unity 编译后 Tools → UI → Create Mecha Repair Prefab
+- 输出路径：Assets/Res/UI/Prefab/UILogin/UIMechaRepair.prefab
+- 布局基准：Root 900×650，居中，各元素 anchoredPosition 已按目标图像素测量换算
+- 待验收：Unity 启动后执行脚本，截图对比目标图做微调
+
+### 资源规则速查
+- 图片 sprite 引用方式：m_Sprite: {fileID: 21300000, guid: <meta中的guid>, type: 3}
+- Image 组件脚本 guid: c81b19283ff80804a88d4f1bed8bd2ef
+- 自定义 Button 脚本 guid: 5e2aea1dd1bda784e98010997c09baef
+- 文字阴影/描边脚本 guid: 325c83ddc30c0544a91a2f6ecbc561a1
+- Text 组件脚本 guid: 3501d990b4af08747a2fa646f81c04dd（项目自定义）
+- HP 条：Image.Type=Filled, FillMethod=Horizontal, fillOrigin=0，fillAmount 由脚本驱动
+- 弹窗根节点需挂 UIBase 脚本 guid: e8f4194e9ed83794da496c6236ff0d7f
 
 ### 复盘
 - 暂无
