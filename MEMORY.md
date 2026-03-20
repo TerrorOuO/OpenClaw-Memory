@@ -116,6 +116,24 @@
   - SoldierType: 1=猎人 2=射手 3=斗士
   - PropType 格式：`属性ID,数值|属性ID,数值`
 
+### 关键内容记录
+
+**2026-03-20：ItemObtain 获取途径配置**
+- 需求：为 1142（经验）、220001（紫色碎片）、220002（橙色碎片）新增获取途径
+- 关联表：Item.ObtainID → ItemObtain.ID → ShopItemCfg（钻石商店商品）
+- 现状：
+  - 1142 ObtainID 为空，需新增途径：情报(503)、每日心动(597)、海兽(504)、钻石商店(405)
+  - 220001/220002 ObtainID 原填 19|651（占位，不对），需替换
+  - 钻石商店途径需先在 ShopItemCfg 新增商品行（1000046/47/48），Sort 和 Price 待策划定
+  - 礼包途径需在 ItemObtain 新增两行（100351/100352），Value（礼包ID）待确认
+- 读表方法：scp 直接传输 xlsx 会截断（200KB vs 442KB），需用 `ssh python3 -c "sys.stdout.buffer.write(open(...,'rb').read())"` 方式传输二进制文件
+
+**表结构速查**
+- Item 表：ObtainID 列填 ItemObtain.ID，多个用 `|` 分隔
+- ItemObtain 表：ObtainType(3=礼包/4=商店/5=界面/6=兑换)，Value 对应各类型参数
+- ShopGroupCfg ID=101：钻石商店，Content=1011
+- ShopItemCfg：ShopType=1011 为钻石商店商品，ConsumeItem=1002（钻石）
+
 ### 复盘
 - 暂无
 
