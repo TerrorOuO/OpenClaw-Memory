@@ -44,7 +44,7 @@
       "wakeMode": "now",
       "payload": {
         "kind": "systemEvent",
-        "text": "早间记忆同步任务：\n1. 用 web_fetch 获取 https://raw.githubusercontent.com/TerrorOuO/OpenClaw-Memory/main/MEMORY.md 的内容\n2. 将获取到的内容写入本地 /root/.openclaw/workspace/MEMORY.md（覆盖写入）\n3. 检查 git log，查看各群昨晚归档情况\n4. 播报给哥，格式：\n📋 早间同步 YYYY-MM-DD\n✅ 记忆已同步\n✅/❌ 代码排查群 — 已归档/未归档\n✅/❌ 系统设计群 — 已归档/未归档\n✅/❌ 配置编辑群 — 已归档/未归档\n✅/❌ 数值讨论群 — 已归档/未归档"
+        "text": "早间同步播报任务：\n1. 用 web_fetch 获取 https://raw.githubusercontent.com/TerrorOuO/OpenClaw-Memory/main/MEMORY.md 的内容\n2. 将获取到的内容写入本地 /root/.openclaw/workspace/MEMORY.md（覆盖写入）\n3. 读取本地 MEMORY.md，提取各分区昨天新增的内容摘要\n4. 通过 message 工具发送播报给哥（channel: hub-channel），格式：\n\n📋 早间同步 YYYY-MM-DD\n\n[代码排查] 一句话摘要昨天新增内容，无则写无更新\n[配置编辑] 一句话摘要\n[数值讨论] 一句话摘要\n[系统设计] 一句话摘要\n[UI设计] 一句话摘要\n\n✅ 记忆已同步（或 ❌ 同步失败：原因）"
       },
       "state": {
         "nextRunAtMs": 1774056300000,
