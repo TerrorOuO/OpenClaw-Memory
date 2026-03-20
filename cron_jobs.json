@@ -1,0 +1,214 @@
+{
+  "version": 1,
+  "jobs": [
+    {
+      "id": "217a15e9-14cc-4356-90c2-013c814b143e",
+      "name": "daily-memory-archive",
+      "description": "每天00:30统一整理各群归档并push",
+      "enabled": true,
+      "createdAtMs": 1773924571305,
+      "updatedAtMs": 1773937811755,
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 0 * * *"
+      },
+      "sessionTarget": "main",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "systemEvent",
+        "text": "整理今天所有对话内容，按 MEMORY.md 的分区结构（[代码排查]、[配表]、[数值]、[系统设计]）归类更新对应分区，有新的复盘也要写进去。更新完后执行：cd /root/.openclaw/workspace && git add MEMORY.md && git commit -m 'daily: 2026-03-19' && git push"
+      },
+      "state": {
+        "nextRunAtMs": 1774024200000,
+        "lastRunAtMs": 1773937800061,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 11694,
+        "lastDeliveryStatus": "not-requested",
+        "consecutiveErrors": 0
+      }
+    },
+    {
+      "id": "cf469093-2fcd-4d74-903a-ba14abda521b",
+      "name": "morning-memory-sync",
+      "description": "每早9:30同步最新MEMORY并播报各群昨日12:00归档情况",
+      "enabled": true,
+      "createdAtMs": 1773924579750,
+      "updatedAtMs": 1773970728068,
+      "schedule": {
+        "kind": "cron",
+        "expr": "25 9 * * 1-5",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "main",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "systemEvent",
+        "text": "早间记忆同步任务：\n1. 用 web_fetch 获取 https://raw.githubusercontent.com/TerrorOuO/OpenClaw-Memory/main/MEMORY.md 的内容\n2. 将获取到的内容写入本地 /root/.openclaw/workspace/MEMORY.md（覆盖写入）\n3. 检查 git log，查看各群昨晚归档情况\n4. 播报给哥，格式：\n📋 早间同步 YYYY-MM-DD\n✅ 记忆已同步\n✅/❌ 代码排查群 — 已归档/未归档\n✅/❌ 系统设计群 — 已归档/未归档\n✅/❌ 配置编辑群 — 已归档/未归档\n✅/❌ 数值讨论群 — 已归档/未归档"
+      },
+      "state": {
+        "nextRunAtMs": 1774056300000,
+        "lastRunAtMs": 1773970200165,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 32253,
+        "lastDeliveryStatus": "not-requested",
+        "consecutiveErrors": 0
+      }
+    },
+    {
+      "id": "ab628582-1e96-4a98-9f55-1aacc8926d2b",
+      "name": "config-group-archive",
+      "description": "每天00:00/09:00/12:00归档配置编辑群对话",
+      "enabled": true,
+      "createdAtMs": 1773926518325,
+      "updatedAtMs": 1773970979005,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 21,0 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "main",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "systemEvent",
+        "text": "配置编辑群归档任务：\n1. 读取本地 /root/.openclaw/workspace/MEMORY.md\n2. 回顾本次 session 中配置编辑群的对话，提取：配表需求、填表规范、表结构、踩过的坑\n3. 若有新内容，更新 MEMORY.md 的 [配置编辑群] 分区（追加，不覆盖其他分区）\n4. 无论是否有新内容，执行：cd /root/.openclaw/workspace && git add MEMORY.md && git diff --cached --quiet || git commit -m 'config-archive: $(date +%Y-%m-%d)' && git push\n5. 若无新内容，commit 会被跳过，正常结束即可"
+      },
+      "state": {
+        "nextRunAtMs": 1774011600000,
+        "lastRunAtMs": 1773936000065,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 10544,
+        "lastDeliveryStatus": "not-requested",
+        "consecutiveErrors": 0
+      }
+    },
+    {
+      "id": "16588ec6-91a9-4685-8ff5-ab2d3f7f5ece",
+      "name": "code-group-archive",
+      "description": "每天00:00/09:00/12:00归档代码排查群对话",
+      "enabled": true,
+      "createdAtMs": 1773927257614,
+      "updatedAtMs": 1773970973892,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 21,0 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "main",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "systemEvent",
+        "text": "代码排查群归档任务：\n1. 读取本地 /root/.openclaw/workspace/MEMORY.md\n2. 回顾本次 session 中代码排查群的对话，提取：排查过程、根因结论、环境信息、复盘\n3. 若有新内容，更新 MEMORY.md 的 [代码排查] 分区（追加，不覆盖其他分区）\n4. 无论是否有新内容，执行：cd /root/.openclaw/workspace && git add MEMORY.md && git diff --cached --quiet || git commit -m 'code-archive: $(date +%Y-%m-%d)' && git push\n5. 若无新内容，commit 会被跳过（--quiet 判断），正常结束即可"
+      },
+      "state": {
+        "nextRunAtMs": 1774011600000,
+        "lastRunAtMs": 1773936010609,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 15819,
+        "lastDeliveryStatus": "not-requested",
+        "consecutiveErrors": 0
+      }
+    },
+    {
+      "id": "691c171e-d121-4f95-b1ce-45dbeb01bee4",
+      "name": "design-group-archive",
+      "description": "每天00:00/09:00/12:00归档系统设计群对话",
+      "enabled": true,
+      "createdAtMs": 1773927551931,
+      "updatedAtMs": 1773970975710,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 21,0 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "main",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "systemEvent",
+        "text": "系统设计群归档任务：\n1. 读取本地 /root/.openclaw/workspace/MEMORY.md\n2. 回顾本次 session 中系统设计群的对话，提取：设计决策、功能方案、立项方向、架构讨论\n3. 若有新内容，更新 MEMORY.md 的 [系统设计] 分区（追加，不覆盖其他分区）\n4. 无论是否有新内容，执行：cd /root/.openclaw/workspace && git add MEMORY.md && git diff --cached --quiet || git commit -m 'design-archive: $(date +%Y-%m-%d)' && git push\n5. 若无新内容，commit 会被跳过，正常结束即可"
+      },
+      "state": {
+        "nextRunAtMs": 1774011600000,
+        "lastRunAtMs": 1773936026428,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 5496,
+        "lastDeliveryStatus": "not-requested",
+        "consecutiveErrors": 0
+      }
+    },
+    {
+      "id": "5cede735-728d-46c5-a7a9-35811d688259",
+      "name": "daily-report",
+      "description": "每天21:15确认各群归档后发日报",
+      "enabled": true,
+      "createdAtMs": 1773930248065,
+      "updatedAtMs": 1773977941456,
+      "schedule": {
+        "kind": "cron",
+        "expr": "15 21 * * 1-5"
+      },
+      "sessionTarget": "main",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "systemEvent",
+        "text": "日报生成任务：\n回顾今天所有分区的对话内容，以第一人称自然语言输出今日日报，直接发送给哥。\n\n格式要求：\n- 标题：📋 YYYY-MM-DD\n- 正文：按 1. 2. 3. 分点，每点一句话，所有分区内容打散混排，不按分区分组\n- 以实际解决的问题和完成的工作为主\n- 不提运维/定时任务/系统配置类工作\n- 不写字段名、配置名、具体参数，用自然语言描述\n- 不写分区标题（不写「代码排查」「数值讨论」等）\n- 第一人称，不说'帮你'，直接说做了什么\n- 简洁，每点不超过两句话\n\n写完后通过 message 工具发送给哥（channel: hub-channel）"
+      },
+      "state": {
+        "nextRunAtMs": 1774012500000
+      }
+    },
+    {
+      "id": "a9289fef-5748-44a5-aa28-369e692d561a",
+      "name": "numeric-group-archive",
+      "description": "每天21:00/00:00归档数值讨论群对话到MEMORY.md",
+      "enabled": true,
+      "createdAtMs": 1773931526526,
+      "updatedAtMs": 1773970977366,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 21,0 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "main",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "systemEvent",
+        "text": "数值讨论群归档任务：\n1. 读取本地 /root/.openclaw/workspace/MEMORY.md\n2. 回顾本次 session 中数值讨论群的对话，提取：数值公式、分析思路、学习记录、复盘\n3. 若有新内容，更新 MEMORY.md 的 [数值讨论] 分区（追加，不覆盖其他分区）\n4. 无论是否有新内容，执行：cd /root/.openclaw/workspace && git add MEMORY.md && git diff --cached --quiet || git commit -m 'numeric-archive: $(date +%Y-%m-%d)' && git push\n5. 若无新内容，commit 会被跳过，正常结束即可"
+      },
+      "state": {
+        "nextRunAtMs": 1774011600000,
+        "lastRunAtMs": 1773936031924,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 2806,
+        "lastDeliveryStatus": "not-requested",
+        "consecutiveErrors": 0
+      }
+    },
+    {
+      "id": "14706eab-596c-4bc9-94cc-7bec93f8a345",
+      "name": "ui-group-archive",
+      "enabled": true,
+      "createdAtMs": 1773976489180,
+      "updatedAtMs": 1773976489180,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 21,0 * * *",
+        "tz": "Asia/Shanghai"
+      },
+      "sessionTarget": "main",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "systemEvent",
+        "text": "UI设计群归档任务：\n1. 读取本地 /root/.openclaw/workspace/MEMORY.md\n2. 回顾本次 session 中 UI 设计群的对话，提取：UI设计决策、UX交互逻辑、prefab 生成记录、资源规则、复盘\n3. 若有新内容，更新 MEMORY.md 的 [UI设计] 分区（追加，不覆盖其他分区）\n4. 无论是否有新内容，执行：cd /root/.openclaw/workspace && git add MEMORY.md && git diff --cached --quiet || git commit -m 'ui-archive: $(date +%Y-%m-%d)' && git push\n5. 若无新内容，commit 会被跳过，正常结束即可"
+      },
+      "state": {
+        "nextRunAtMs": 1774011600000
+      }
+    }
+  ]
+}
