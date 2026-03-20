@@ -138,17 +138,71 @@
 - 布局基准：Root 900×650，居中，各元素 anchoredPosition 已按目标图像素测量换算
 - 待验收：Unity 启动后执行脚本，截图对比目标图做微调
 
-### 资源规则速查
-- 图片 sprite 引用方式：m_Sprite: {fileID: 21300000, guid: <meta中的guid>, type: 3}
-- Image 组件脚本 guid: c81b19283ff80804a88d4f1bed8bd2ef
-- 自定义 Button 脚本 guid: 5e2aea1dd1bda784e98010997c09baef
-- 文字阴影/描边脚本 guid: 325c83ddc30c0544a91a2f6ecbc561a1
-- Text 组件脚本 guid: 3501d990b4af08747a2fa646f81c04dd（项目自定义）
-- HP 条：Image.Type=Filled, FillMethod=Horizontal, fillOrigin=0，fillAmount 由脚本驱动
-- 弹窗根节点需挂 UIBase 脚本 guid: e8f4194e9ed83794da496c6236ff0d7f
+### 项目 UI 预制体通用规则（来自 UITest.prefab）
 
-### 复盘
-- 暂无
+**脚本 GUID 速查**
+- Image 组件：c81b19283ff80804a88d4f1bed8bd2ef
+- 自定义 Button：5e2aea1dd1bda784e98010997c09baef（含缩放反馈 pressed scale 0.95）
+- 自定义 Button（另一种）：1da2a900e79078449848779d2f553a64（LongPress 支持）
+- Text 组件（项目自定义）：3501d990b4af08747a2fa646f81c04dd
+- Text 组件（另一种）：abe1a3836752dc54794a1bd01f8e3e9c
+- 文字阴影/描边：325c83ddc30c0544a91a2f6ecbc561a1
+- UIBase（弹窗根节点）：e8f4194e9ed83794da496c6236ff0d7f（含 clickMaskClose / DoTween 动画）
+- CanvasScaler：0cd44c1031e13a943bb63640046fad76
+- HorizontalLayoutGroup：30649d3a9faa99c48a7b1166b86bf2a0
+- DOTween 动画组件：4d0390bd8b8ffd640b34fe25065ff1df
+
+**层级结构规范**
+- Root 尺寸：1000×730，anchor/pivot 居中 (0.5, 0.5)
+- 背景层：BG 节点（stretch 铺满 Root）→ 子节点放 bg 图和装饰横条
+- 顶部栏：TOP 节点（anchor top 全宽，高 110）→ 子节点放标题图和关闭按钮
+  - 关闭按钮：anchor 右上 (1,1)，pos(-64,-58)，size 104×104
+  - 标题图：anchor 顶中，pos(0,-55)，size 600×100
+- 内容区：Content 节点（居中，1000×400，pos 0,15）
+- 按钮行：Button 节点（anchor 底中，pos 0,118，800×150）+ HorizontalLayoutGroup
+- 材料/道具行：item 节点（居中，1000×100）+ HorizontalLayoutGroup
+
+**HP 血条规范**
+- hp 容器节点（anchor 顶中，500×70）
+- bg 子节点：stretch 铺满，挂 hp_bg 图
+- hp 子节点：anchorMin(0,0) anchorMax(1,1)，sizeDelta(-260,-10)，pos(-120,0)，挂 hp 前景图（不用 Filled，用偏移裁切）
+- 右侧数值框：anchor 右(1,0.5)，pos(93,0)，140×80
+
+**装饰横条（bg_mask）规范**
+- 属于背景层，放在 BG 节点下，不要放在功能节点（如 hp）里
+- 作为标题下方或内容区分隔的横向装饰条使用
+- 水平方向拉伸（anchorMin.x=0, anchorMax.x=1），垂直方向固定高度
+
+**按钮规范**
+- 用 HorizontalLayoutGroup 自动排列，不手动摆坐标
+- 每个按钮子节点：bg（stretch 铺满按钮图）+ TEXT（文字，stretch 留边距）
+- 文字颜色：金色 (0.97, 0.90, 0.59)，带描边组件
+
+**文字规范**
+- BestFit: 1，MinSize: 3，MaxSize 按需设置
+- 标题文字：FontSize 46，金色 (0.97, 0.90, 0.59)，带描边
+- 按钮文字：FontSize 50，金色，Bold
+- 数值文字（HP等）：FontSize 40，黄色 (0.73, 0.68, 0.16)
+- 材料数量：FontSize 30，红色 (0.67, 0.06, 0.06)，Bold
+
+**Sprite 引用格式**
+- m_Sprite: {fileID: 21300000, guid: <meta中的guid>, type: 3}
+
+### 复盘（2026-03-20 UIMechaRepair 任务）
+
+**错误记录**
+1. Root 尺寸用了 900×650，实际项目标准是 1000×730，导致整体比例偏小
+2. 按钮用手动 anchoredPosition 摆坐标，实际项目用 HorizontalLayoutGroup 自动排列
+3. bg_mask 放进了 hp 节点里，实际应放在 BG 节点下作为背景装饰层
+4. HP 前景条用了 Image.Type=Filled，实际项目用 sizeDelta 偏移裁切（anchorMin/Max 拉伸 + sizeDelta 负值）
+5. Text 组件用了 `Resources.GetBuiltinResource<Font>("Arial.ttf")`，新版 Unity 不支持，导致编译报错
+6. 没有先读参考预制体就开始写脚本，导致层级结构和规范偏差大
+
+**经验总结**
+- 拿到新 UI 任务，第一步必须先读同目录下已有的参考预制体，提取层级结构和组件规范，再动手
+- 装饰性资源（横条、背景纹理）归属背景层，功能性资源（血条、图标）归属内容层，不要混放
+- 项目有自己的 Button/Text 组件，不要用 Unity 原生组件替代
+- Editor 脚本生成预制体效率高，但坐标精度依赖对设计图的像素测量，误差会累积，后续考虑直接生成 YAML 预制体文件精度更高
 
 ---
 
