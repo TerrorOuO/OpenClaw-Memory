@@ -238,6 +238,18 @@
 - +1 的数值单位待确认（Property.xlsx 读取失败，推测为万分比，即 +0.01%）
 - 待确认：Property.xlsx 是否有密码保护，120022 的单位定义
 
+**2026-03-20：SLG 主堡升级数值设计复盘（我的设计 vs Sonnet）**
+- 我的设计表：https://docs.google.com/spreadsheets/d/141Wf9ZE4CfkmHvmBk5L52CQjCh_wlLUWyWs58vN12NM
+- Sonnet 设计表：https://docs.google.com/spreadsheets/d/1gMYB_gwOioH0oGxQpmS4Di9bIr7zyFvgZcZD7WYCtjs（tab: 主堡升级数值（公式））
+- 核心差距：
+  1. 时间精度：我的设计 69 天偏松，Sonnet 精确卡 91 天，且把加速机制显式建模
+  2. 资源比例：我的四种资源各自独立指数，后期铁矿严重失衡；Sonnet 以粮食为基准用比例系数统一换算
+  3. 战力曲线：我用幂函数后期增量递减；Sonnet 用倍率增长保证高级玩家碾压感，且明确主堡战力占全账号 15-20%
+  4. 付费设计：我只有模糊的"加速道具"；Sonnet 明确四个卡点（Lv10/16/21/26）与 T3/T4/T5 兵解锁强绑定
+  5. 玩家分层：我没有分层；Sonnet 明确免费（Lv21/60天）、中度（Lv26/64天）、重度（Lv30/91天）三层
+  6. 文档质量：我停留在"数值能跑通"；Sonnet 有完整的设计逻辑推导，适合评审对齐
+- 学习要点：数值设计不只是公式，要有商业化逻辑推导和玩家分层视角
+
 ### 复盘
 - 暂无
 
