@@ -171,8 +171,15 @@ Source: Web Fetch
 - X3NEW-181：敌方无海妖时海妖技能触发区域显示空白，应显示"该部队无海妖参战"（C级，版本：海妖版本）
 - X3NEW-182：战报海妖资讯头像应使用无背景色版本头像框（C级，版本：海妖版本）
 
+**2026-03-26：海妖系统 Bug 批量创建**
+- X3NEW-186：隐藏UI后页签选定状态丢失（C级，经办人 liuweiwei）— SetCleanMode(false) 恢复时未调用 SwitchTab，页签视觉态未同步
+- X3NEW-187：治疗期间养成界面加号按钮资源应替换为 img_dtc_btn_jump（C级，经办人 liuweiwei）
+- X3NEW-188：治疗弹窗海妖头像框适配不正确，建议换用排行榜常规头像框（C级，经办人 liuweiwei，含截图附件）
+- X3NEW-192：视频播放时需点击一次界面才出现跳过按钮（C级，经办人 zhangli）
+
 ### 经办人映射补充
 - 战报系统：zhangsilin
+- 视频播放相关：zhangli
 
 ### 复盘
 - Property.xlsx 有保护无法直接读取，遇到连续2次读取失败应立即告知哥，不要继续无效尝试
@@ -448,6 +455,8 @@ service = build('sheets', 'v4', credentials=creds)
 - **2026-03-20：** 工具调用超时或无输出时没有主动告知，沉默等哥来催 → 改进：每次工具调用结束必须主动汇报状态；超时或无输出立即说明并切换方案，不等催；长任务中间加进度播报
 - **2026-03-20 gen_i18n 脚本分析任务：** SSH 读文件 + 多次 scp + grep 分析，实际耗时约 40s，应用子 agent 但直接自己跑了 → 判断失误原因：看到 SSH 操作就习惯性直接做，没有先估时长
 - **2026-03-24 早间播报任务：** write 工具的 content 参数是必填的，不能只传 file_path，否则会报 validation failed
+- **2026-03-26 Jira 子 agent 多次失败：** spawn 子 agent 创建 Bug 时，子 agent 反复卡在"找 env 文件"阶段无法完成 → 改进：子 agent 连续两次返回无效结果后，直接主 agent 用 python3 调 Jira REST API 创建，不再重试子 agent；同时记录直接调 API 的方式（读 ~/.env.jira → requests.post）作为兜底方案
+- **2026-03-26 jira-bug-creator skill 路径问题：** skill 脚本路径硬编码为 Windows（c:\Users\caoxinying\...），在 Linux 环境下无法直接调用 → 兜底方案：直接用 python3 + requests 调 Jira REST API，不依赖 skill 脚本
 
 ## 数据检查经验积累
 
