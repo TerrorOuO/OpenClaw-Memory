@@ -180,6 +180,16 @@ Source: Web Fetch
 **2026-03-27：海妖引导重复触发 Bug 创建**
 - X3NEW-232：触发海妖引导后每次重启游戏都会重复触发引导（C级，经办人 liuweiwei，版本：海妖版本）
 
+**2026-03-30：海妖系统 Bug 批量创建（X3NEW-266/268/269/280，经办人 liuweiwei）**
+- X3NEW-266：大地图集结行军中海妖与主船穿模（C级）
+- X3NEW-268：主宰共鸣技能升级预览数值显示占位符未替换（"{0}""{1}"未替换为实际数值）（C级）
+- X3NEW-269：海妖攻击敌方中立建筑时朝向跟随船头偏转而非朝向目标（C级）
+- X3NEW-280：KVK战斗中后续回声丰碑封包攻击的海妖伤害数值未更新，始终显示首次进入战斗的轻伤重伤数据（C级）
+
+**2026-03-30：普通海兽掉落查询（未完成）**
+- 任务：查询 UnitConfigMonster.xlsx 中 MonsterType=2 普通海兽各等级奖励道具
+- 状态：SSH 连接 172.20.160.68 本次无输出，任务未完成，待下次确认连接状态后继续
+
 ### 经办人映射补充
 - 战报系统：zhangsilin
 - 视频播放相关：zhangli
@@ -187,6 +197,7 @@ Source: Web Fetch
 ### 复盘
 - Property.xlsx 有保护无法直接读取，遇到连续2次读取失败应立即告知哥，不要继续无效尝试
 - 早间播报任务（web_fetch GitHub + write MEMORY.md）需注意 write 工具的 content 参数是必填的，不能只传 file_path
+- **2026-03-30 子 agent 结果不完整：** 多个 Bug 创建子 agent 只返回中间状态（"Bug 创建成功，现在上传截图"），未给出 issue key 和链接 → 改进：子 agent 完成后主 agent 校验结果是否含 issue key，缺失时主动查 Jira 最近创建记录（jql: project=X3NEW ORDER BY created DESC）补全
 
 ---
 
