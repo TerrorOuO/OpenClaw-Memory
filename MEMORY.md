@@ -235,6 +235,16 @@ Source: Web Fetch
   8. 炼金合成经营（原型：Little Alchemy 2）— 元素合成 → 科技树/军备系统，稀有元素逼迫扩张或贸易
 - 待续：哥尚未确认感兴趣方向
 
+**2026-03-31：Quarantine Zone: The Last Check 游戏系统分析**
+- 开发：Brigada Games | 发行：Devolver Digital | 引擎：UE5 | 发售：2026-01-12
+- 类型：模拟经营，单人，买断制；首周销量 50 万份，Steam 畅销榜第三
+- 核心玩法：第一人称检查幸存者（类 Papers, Please）+ 等距视角基地管理 + 夜间无人机塔防
+- 检查系统：使用反射锤/扫描仪/手电筒等工具逐项核查症状，判决放行/隔离/消灭，误判有双向惩罚
+- 经济循环：白天检查赚钱 → 升级设施（宿舍/防御/发电机）→ 维护成本持续消耗，形成压力
+- 口碑：褒贬不一，核心检查玩法受认可，基地管理深度不足、发售 bug 较多被批评
+- 对 SLG 立项的启示：双视角切换可映射"小游戏钩子+大地图策略"；道德压力是天然买量素材；昼夜节奏对比避免疲劳；需注意双系统联动深度
+- 分析文档已生成 .docx 并传至 Windows 桌面：quarantine_zone_analysis.docx
+
 **2026-03-25：怪谈题材融合 SLG 立项讨论**
 - 买量钩子：家人敲门 / 判断门外是人还是怪物，私密室内场景
 - 开场玩法对标 Last Asylum：俯视角房间为主视角，点击大门进入独立第一人称小游戏判断真假，判断完退回俯视角
@@ -471,6 +481,9 @@ service = build('sheets', 'v4', credentials=creds)
 - **2026-03-24 早间播报任务：** write 工具的 content 参数是必填的，不能只传 file_path，否则会报 validation failed
 - **2026-03-26 Jira 子 agent 多次失败：** spawn 子 agent 创建 Bug 时，子 agent 反复卡在"找 env 文件"阶段无法完成 → 改进：子 agent 连续两次返回无效结果后，直接主 agent 用 python3 调 Jira REST API 创建，不再重试子 agent；同时记录直接调 API 的方式（读 ~/.env.jira → requests.post）作为兜底方案
 - **2026-03-26 jira-bug-creator skill 路径问题：** skill 脚本路径硬编码为 Windows（c:\Users\caoxinying\...），在 Linux 环境下无法直接调用 → 兜底方案：直接用 python3 + requests 调 Jira REST API，不依赖 skill 脚本
+- **2026-03-31 早间同步失败：** 09:30 cron 触发早间同步，web_fetch 成功拉取 GitHub MEMORY.md，但 write 工具调用时漏传 content 参数，导致写入失败（同 03-24 的老问题）→ 强化记忆：write 工具必须同时传 file_path + content，缺一不可，调用前心理默念一遍
+- **2026-03-31 子 agent 反复返回意图而非结果：** 两个子 agent（游戏分析任务）运行超过 8-13 分钟，最终只返回"现在我来生成..."的意图描述，没有实际执行 → 根因推测：子 agent token 消耗过大导致上下文截断，或任务拆解过细导致 agent 陷入规划循环 → 改进：子 agent 任务描述要聚焦单一目标，避免在一个 task 里塞入"收集+分析+生成+传输"四步；超过 10 分钟无实质结果时主 agent 直接接管执行
+- **2026-03-31 Google token 权限不足：** token scopes 仅 spreadsheets.readonly，无法创建 Docs/Sheets → 需要重新走 OAuth 授权扩展 scope（drive 或 docs 写权限）才能输出到 Google 文档；当前兜底方案：生成 .docx 通过 SCP 传到 Windows
 
 ## 数据检查经验积累
 
