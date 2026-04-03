@@ -83,9 +83,21 @@
 
 ### 环境信息
 - **SSH Host:** 172.20.160.68 | User: xieyuntian | Port: 22 | OS: Windows
-- **代码仓库:** E:\A2\X3_client
-- **项目：** X3（A2系列），Unity 客户端 + C# 服务端
-- **仓库结构：** `client/`（Unity）、`server/`（GameServer / GameServer.Hotfix / CenterServer / MapServer）
+- **代码仓库（X3）:** E:\A2\X3_client
+- **代码仓库（X3）:** E:\A2\X3_client
+- **代码仓库（躺平）:** E:\A2\tangping\client（新项目，2026-04-03 起代码排查/配置编辑/UI设计切换至此）
+- **项目：** X3（A2系列），Unity 客户端 + C# 服务端；躺平项目为纯 Unity 客户端，无独立 server 目录
+- **仓库结构（X3）：** `client/`（Unity）、`server/`（GameServer / GameServer.Hotfix / CenterServer / MapServer）
+- **仓库结构（躺平）：** 根目录 `client/`（Unity 工程）→ `Assets/Game/`（游戏逻辑脚本）、`Assets/Res/`（资源）、`Assets/Infrastructure/`、`Assets/Plugins/`；csproj 命名前缀 X6，推测内部代号 X6
+
+### 躺平项目 Assets 结构速查
+- `Assets/Game/Script/` — 游戏逻辑脚本
+- `Assets/Game/MiniGames/` — 小游戏相关
+- `Assets/Game/Battle/` — 战斗系统
+- `Assets/Game/Config/` — 配置相关
+- `Assets/Game/Common/` — 公共模块
+- `Assets/Res/` — 美术资源（UI Prefab 等）
+- `Assets/Editor/` — 编辑器工具脚本
 
 ### 已排查问题
 
