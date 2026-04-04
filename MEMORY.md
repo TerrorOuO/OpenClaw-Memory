@@ -77,6 +77,22 @@
 - 创建完 Bug 必须附上 Jira 链接回复
 - 用户会在 Jira 内自行修订字段，无需创建前确认
 
+### 附件上传规则（2026-03-25 确认）
+- `create_bug(attachment=...)` 内部会自动上传第一张附件，**不要再额外调用 upload-attachment.py 上传同一张图**，否则会重复
+- 多图处理：`attachment` 传第一张，第二张起用 `upload-attachment.py` 逐个补传
+- 一条消息里的所有截图全部上传到同一个 Bug 单
+
+### 执行环境（2026-03-25 确认）
+- `uv run` 默认使用系统 Python（/usr/bin/python3），不含 atlassian 包
+- 正确执行路径：`/root/.cache/uv/environments-v2/run-bug-0c39fa0988fbec23/bin/python scripts/run-bug.py`
+- 上传附件：`/root/.cache/uv/environments-v2/upload-attachment-2f50c7fcc10674f3/bin/python scripts/upload-attachment.py`
+- run-bug.py 支持 `--dry-run` / `--confirm` 双参数防护，必须显式加 `--confirm` 才真正提单
+
+### 兜底方案（2026-03-26 确认）
+- skill 脚本路径硬编码为 Windows，Linux 环境下无法直接调用
+- 兜底：直接用 python3 + requests 调 Jira REST API（读 ~/.env.jira → requests.post），不依赖 skill 脚本
+- 子 agent 连续两次返回无效结果后，直接主 agent 用 REST API 创建，不再重试子 agent
+
 ---
 
 ## [代码排查]
@@ -175,6 +191,25 @@
 **2026-04-01：海妖养成界面分辨率适配 Bug 创建**
 - X3NEW-301：海妖养成界面在 1:2 分辨率下布局未自适应，立绘与底部面板间存在大面积空白（C级，经办人 liuweiwei，版本：海妖版本，含截图附件）
 
+**2026-03-26：海妖系统 Bug 批量创建（X3NEW-193~206，含重复单）**
+- X3NEW-193：视频播放时需点击一次界面才出现跳过按钮（C级，经办人 zhangli）
+- X3NEW-194：重复单（同X3NEW-193，待哥删除）
+- X3NEW-195：橙色海妖获取界面海妖名称显示本地化键值未转译（C级，经办人 liuweiwei）
+- X3NEW-196：橙色海妖获取界面未显示获取按钮（C级，经办人 liuweiwei）
+- X3NEW-197：提亚马特获取界面道具内容与礼包道具不一致（C级，经办人 zhangsilin）
+- X3NEW-198：购买提亚马特礼包后橙色提亚马特未正确解锁（B级，经办人 zhangsilin）
+- X3NEW-201：创建部队界面海妖模型与船模型重合（B级，经办人 liuweiwei）
+- X3NEW-202：选择海妖界面未解锁海妖背景资源错误且缺少整体置灰效果（C级，经办人 liuweiwei）
+- X3NEW-203：行军攻击时海妖随船偏移方向（B级，经办人 liuweiwei）
+- X3NEW-204：大地图攻击未播放攻击特效及目标受击特效（B级，经办人 liuweiwei）
+- X3NEW-205：派遣海妖援助时援助列表未显示海妖信息（C级，经办人 liuweiwei）
+- X3NEW-206：抵达援助目标后海妖模型停留在目标周围未归位（C级，经办人 liuweiwei）
+
+**2026-03-30：海兽掉落查询链路**
+- 核心表：UnitConfigMonster.xlsx，MonsterType=2 为普通海兽
+- 奖励字段：Reward（个人奖励）/ TeamReward（队伍奖励）/ ExtraReward（活动期间额外奖励，按 MonsterType 挂载）
+- 本次 SSH 无输出，任务未完成，待下次确认连接状态后继续
+
 ### 经办人映射补充
 - 战报系统：zhangsilin
 - 视频播放相关：zhangli
@@ -183,6 +218,7 @@
 - Property.xlsx 有保护无法直接读取，遇到连续2次读取失败应立即告知哥，不要继续无效尝试
 - 早间播报任务（web_fetch GitHub + write MEMORY.md）需注意 write 工具的 content 参数是必填的，不能只传 file_path
 - **2026-03-30 子 agent 结果不完整：** 多个 Bug 创建子 agent 只返回中间状态（"Bug 创建成功，现在上传截图"），未给出 issue key 和链接 → 改进：子 agent 完成后主 agent 校验结果是否含 issue key，缺失时主动查 Jira 最近创建记录（jql: project=X3NEW ORDER BY created DESC）补全
+- **2026-03-26 规则确认：** 哥直接描述问题现象 = 提 bug，不做代码排查和修复，直接开子 agent 提 Jira
 
 ---
 
@@ -435,7 +471,7 @@
 ### Google Sheets 访问
 - **token 路径：** `/root/.openclaw/workspace/google_token.json`
 - **账号：** xieyuntian@nibirutech.com
-- **权限范围：** spreadsheets.readonly
+- **权限范围：** spreadsheets（读写）、drive、documents（2026-04-02 扩权，已更新 token）
 - **client_secret 路径：** `/root/.openclaw/dingtalk-files/1773929201_client_secret_2_380293845993-4atkpamq39id7q8665m31ek9023tf4ii.apps.googleusercontent.com(1).json`
 - **使用方式：**
 ```python
@@ -453,6 +489,26 @@ service = build('sheets', 'v4', credentials=creds)
 ```
 - **注意：** token 会自动用 refresh_token 续期，无需重新授权
 
+### Datain API 配置（2026-04-02 首次配置）
+- **API Key：** 43ac2313-714c-4756-b6fa-ca4763ca9059
+- **已写入：** ~/.bashrc 持久化
+- **X3 游戏编码：** 1090，环境：TRINO_HF
+
+---
+
+## [数据查询记录]
+
+**2026-04-02：海妖拥有量统计（截止4月2日）**
+- 定义：`ods_user_hero` 表中 `change_type='11', attribute3='1'` 为获得海妖（等级1）；`hero_id` 以 `4001` 开头为海妖类型
+- 两日去重 DAU：13,135人
+- 持有情况：仅拥有 40011001（174人，1.32%）、仅拥有 40011002（292人，2.22%）、两只都有（69人，0.53%）、合计持有（535人，4.07%）
+- R级规律：R级越高渗透率越高；40011002 在中R以上明显更受欢迎
+
+**2026-04-02：4.1日收入数据**
+- 4.1日总收入：$17,361；环比前一日 +59.96%；环比上周同日 +66.96%；同比去年 +409.5%
+- 海妖收入占比：4.1日 $8,608（49.58%，221人付费）；4.2日截至上午 $6,716（60.20%，195人付费）
+- 月收入预估（中性）：海妖带来月增量约 $90,000~$180,000，对应月收入提升 +43%~+57%
+
 ---
 
 ## 自我复盘（全局）
@@ -469,6 +525,8 @@ service = build('sheets', 'v4', credentials=creds)
 - **2026-03-31 早间同步失败：** 09:30 cron 触发早间同步，web_fetch 成功拉取 GitHub MEMORY.md，但 write 工具调用时漏传 content 参数，导致写入失败（同 03-24 的老问题）→ 强化记忆：write 工具必须同时传 file_path + content，缺一不可，调用前心理默念一遍
 - **2026-03-31 子 agent 反复返回意图而非结果：** 两个子 agent（游戏分析任务）运行超过 8-13 分钟，最终只返回"现在我来生成..."的意图描述，没有实际执行 → 根因推测：子 agent token 消耗过大导致上下文截断，或任务拆解过细导致 agent 陷入规划循环 → 改进：子 agent 任务描述要聚焦单一目标，避免在一个 task 里塞入"收集+分析+生成+传输"四步；超过 10 分钟无实质结果时主 agent 直接接管执行
 - **2026-03-31 Google token 权限不足：** token scopes 仅 spreadsheets.readonly，无法创建 Docs/Sheets → 需要重新走 OAuth 授权扩展 scope（drive 或 docs 写权限）才能输出到 Google 文档；当前兜底方案：生成 .docx 通过 SCP 传到 Windows
+- **2026-04-02 Google token 已扩权：** 重新走 OAuth 授权，新增 spreadsheets（读写）、drive、documents scope，token 已更新，后续可直接输出到 Google Docs/Sheets
+- **2026-03-26 规则确认：** 哥直接描述问题现象 = 提 bug，不做代码排查，直接提单。收到问题描述时先判断意图（有"帮我查/为什么"→排查；直接描述现象→提单）
 
 ## 数据检查经验积累
 
