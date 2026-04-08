@@ -98,7 +98,7 @@
 ## [代码排查]
 
 ### 环境信息
-- **SSH Host:** 172.20.160.68 | User: xieyuntian | Port: 22 | OS: Windows
+- **SSH Host:** 172.20.75.193 | User: xieyuntian | Port: 22 | OS: Windows（原 172.20.160.68，2026-04-08 IP 变更，DHCP 动态分配）
 - **代码仓库（X3）:** E:\A2\X3_client
 - **代码仓库（X3）:** E:\A2\X3_client
 - **代码仓库（躺平）:** E:\A2\tangping\client（新项目，2026-04-03 起代码排查/配置编辑/UI设计切换至此）
@@ -337,6 +337,12 @@
 
 ### 工作记录
 
+**2026-04-08：躺平项目 NPC Walk 动画资源生成（NPC3/4/5）**
+- 任务：为前期检疫玩法 NPC3、NPC4、NPC5 生成 walk 动画全套资源
+- 产出：每个 NPC 生成 walk 参考图（PNG）、walk 视频（MP4）、去背景视频（nobg.mp4）、SBS 对比视频（sbs.mp4）
+- 文件已传至 Windows：`D:/X6美术资源/X6_ui_CUT/前期检疫玩法/NPC3~5/` 各自目录下
+- 执行过程发现 `export_sbs_video` 工具参数名为 `input_videos`（非 `video_path`），且需要 `quality` 参数，已自动修正
+
 **2026-03-20：UIMechaRepair 修理机甲弹窗**
 - 任务：根据设计图拼接预制体，使用 UILogin 目录下 img_mecha_window_* 资源
 - 产出：Assets/Editor/CreateUIMechaRepair.cs（已推送到 E:\A2\X3_client\client\Assets\Editor\）
@@ -527,6 +533,7 @@ service = build('sheets', 'v4', credentials=creds)
 - **2026-03-31 Google token 权限不足：** token scopes 仅 spreadsheets.readonly，无法创建 Docs/Sheets → 需要重新走 OAuth 授权扩展 scope（drive 或 docs 写权限）才能输出到 Google 文档；当前兜底方案：生成 .docx 通过 SCP 传到 Windows
 - **2026-04-02 Google token 已扩权：** 重新走 OAuth 授权，新增 spreadsheets（读写）、drive、documents scope，token 已更新，后续可直接输出到 Google Docs/Sheets
 - **2026-03-26 规则确认：** 哥直接描述问题现象 = 提 bug，不做代码排查，直接提单。收到问题描述时先判断意图（有"帮我查/为什么"→排查；直接描述现象→提单）
+- **2026-04-08 子 agent 19秒提前退出：** npc-walk-pipeline-v2 子 agent 只运行 19 秒就结束，仅输出"开始执行"意图描述，未实际执行任何工具 → 根因：任务描述可能触发了 agent 的规划循环但未进入执行阶段，或上下文不足导致 agent 认为任务已完成 → 改进：子 agent 运行时长 < 60s 且无实质工具调用结果时，视为无效结果，主 agent 直接接管或重新 spawn 并在 task 描述中明确"必须调用工具执行，不得只输出计划"
 
 ## 数据检查经验积累
 
