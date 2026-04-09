@@ -534,6 +534,7 @@ service = build('sheets', 'v4', credentials=creds)
 - **2026-04-02 Google token 已扩权：** 重新走 OAuth 授权，新增 spreadsheets（读写）、drive、documents scope，token 已更新，后续可直接输出到 Google Docs/Sheets
 - **2026-03-26 规则确认：** 哥直接描述问题现象 = 提 bug，不做代码排查，直接提单。收到问题描述时先判断意图（有"帮我查/为什么"→排查；直接描述现象→提单）
 - **2026-04-08 子 agent 19秒提前退出：** npc-walk-pipeline-v2 子 agent 只运行 19 秒就结束，仅输出"开始执行"意图描述，未实际执行任何工具 → 根因：任务描述可能触发了 agent 的规划循环但未进入执行阶段，或上下文不足导致 agent 认为任务已完成 → 改进：子 agent 运行时长 < 60s 且无实质工具调用结果时，视为无效结果，主 agent 直接接管或重新 spawn 并在 task 描述中明确"必须调用工具执行，不得只输出计划"
+- **2026-04-09 跨 session 通信测试：** 哥在数值讨论群发消息后，sessions_list 仍只返回主 session，其他分区群 agent 未出现在列表中；随后 gateway 连续超时，测试未能完成 → 待 gateway 稳定后重新验证；跨群汇总功能依赖各分区 agent session 可被主 session 枚举，当前尚未打通
 
 ## 数据检查经验积累
 
