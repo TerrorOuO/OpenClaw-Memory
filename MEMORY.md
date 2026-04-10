@@ -515,6 +515,12 @@ service = build('sheets', 'v4', credentials=creds)
 - 海妖收入占比：4.1日 $8,608（49.58%，221人付费）；4.2日截至上午 $6,716（60.20%，195人付费）
 - 月收入预估（中性）：海妖带来月增量约 $90,000~$180,000，对应月收入提升 +43%~+57%
 
+**2026-04-10：X6 项目数据查询**
+- 今日（4/10）DNU：12
+- 昨日（4/9）DAU：103
+- 游戏编码：1105；Datain 指标 ID — DNU: `60d309ab3c993223104495f7`，DAU: `612c7942b27d3b153da7e954`（平均 DAU，单日查询时等同当日 DAU）
+- datain-skill 执行注意：`/opt/shared-skills/datain-skill` 目录只读，cache 写入会报错；需先 `cp -r` 到 `/tmp/datain-skill` 并将 `assets/configs.json` 中 `cache_dir` 改为 `/tmp/datain-cache/` 再执行
+
 ---
 
 ## 自我复盘（全局）
@@ -535,6 +541,8 @@ service = build('sheets', 'v4', credentials=creds)
 - **2026-03-26 规则确认：** 哥直接描述问题现象 = 提 bug，不做代码排查，直接提单。收到问题描述时先判断意图（有"帮我查/为什么"→排查；直接描述现象→提单）
 - **2026-04-08 子 agent 19秒提前退出：** npc-walk-pipeline-v2 子 agent 只运行 19 秒就结束，仅输出"开始执行"意图描述，未实际执行任何工具 → 根因：任务描述可能触发了 agent 的规划循环但未进入执行阶段，或上下文不足导致 agent 认为任务已完成 → 改进：子 agent 运行时长 < 60s 且无实质工具调用结果时，视为无效结果，主 agent 直接接管或重新 spawn 并在 task 描述中明确"必须调用工具执行，不得只输出计划"
 - **2026-04-09 跨 session 通信测试：** 哥在数值讨论群发消息后，sessions_list 仍只返回主 session，其他分区群 agent 未出现在列表中；随后 gateway 连续超时，测试未能完成 → 待 gateway 稳定后重新验证；跨群汇总功能依赖各分区 agent session 可被主 session 枚举，当前尚未打通
+- **2026-04-10 datain-skill cache 只读问题：** `/opt/shared-skills/datain-skill` 目录只读，直接执行脚本时 cache 写入报 OSError → 兜底：cp -r 到 /tmp/datain-skill，修改 assets/configs.json 的 cache_dir 为 /tmp/datain-cache/ 后执行，后续每次调用 datain-skill 都走这个路径
+- **2026-04-10 内网工具访问限制：** 哥询问能否调用 voiceclone.tap4fun.com 生成语音，该域名解析到内网 IP，OpenClaw 沙箱无法访问 → 需要哥提供 API 接口文档或抓包参数才能代为调用；内网服务统一走这个方式处理
 
 ## 数据检查经验积累
 
