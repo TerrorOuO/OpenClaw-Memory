@@ -521,6 +521,13 @@ service = build('sheets', 'v4', credentials=creds)
 - 游戏编码：1105；Datain 指标 ID — DNU: `60d309ab3c993223104495f7`，DAU: `612c7942b27d3b153da7e954`（平均 DAU，单日查询时等同当日 DAU）
 - datain-skill 执行注意：`/opt/shared-skills/datain-skill` 目录只读，cache 写入会报错；需先 `cp -r` 到 `/tmp/datain-skill` 并将 `assets/configs.json` 中 `cache_dir` 改为 `/tmp/datain-cache/` 再执行
 
+**2026-04-11：X6 前一周战斗数据查询（4/4~4/10）**
+- 指标 ID — 平均战斗次数: `60e6c405b1ed0473c4cc4fc1`，平均PVP次数: `60fea9c3b021ca71a727c39d`，平均战斗用户数: `6131dc18c842a71cd22616a4`，平均PVP用户数: `6131dca1c842a71cd22616a7`，平均战损(仅GVG/PVP): `6375faccba1b2f22097ad81a`
+- 结论：全周战斗 136 次，全部为 PVE；PVP 次数=0，战损=0；参战用户每日 4~8 人，渗透率低
+- 底层表来源：Datain API 不暴露指标对应的原始表，需联系数据部或去平台指标管理页确认
+- 哥询问 Claude Code 安装方式，已提供完整配置步骤（npm install + ~/.claude/settings.json + openclaw config）
+- 哥想申请 OneHub Key 用于 Claude Code，onehub skill 文件不存在，引导哥去 https://onehub.tap4fun.com 自行申请，备注写"Claude Code"，拿到 Key 后发给我写入配置
+
 ---
 
 ## 自我复盘（全局）
@@ -543,6 +550,7 @@ service = build('sheets', 'v4', credentials=creds)
 - **2026-04-09 跨 session 通信测试：** 哥在数值讨论群发消息后，sessions_list 仍只返回主 session，其他分区群 agent 未出现在列表中；随后 gateway 连续超时，测试未能完成 → 待 gateway 稳定后重新验证；跨群汇总功能依赖各分区 agent session 可被主 session 枚举，当前尚未打通
 - **2026-04-10 datain-skill cache 只读问题：** `/opt/shared-skills/datain-skill` 目录只读，直接执行脚本时 cache 写入报 OSError → 兜底：cp -r 到 /tmp/datain-skill，修改 assets/configs.json 的 cache_dir 为 /tmp/datain-cache/ 后执行，后续每次调用 datain-skill 都走这个路径
 - **2026-04-10 内网工具访问限制：** 哥询问能否调用 voiceclone.tap4fun.com 生成语音，该域名解析到内网 IP，OpenClaw 沙箱无法访问 → 需要哥提供 API 接口文档或抓包参数才能代为调用；内网服务统一走这个方式处理
+- **2026-04-11 onehub skill 缺失：** 哥要申请 OneHub Key，/opt/shared-skills/onehub/SKILL.md 不存在 → 直接引导去网页申请；后续如需自动化创建 Key，需要先确认 onehub skill 是否已安装或找数据部获取 API 文档
 
 ## 数据检查经验积累
 
