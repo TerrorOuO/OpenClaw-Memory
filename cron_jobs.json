@@ -16,7 +16,7 @@
       "wakeMode": "now",
       "payload": {
         "kind": "systemEvent",
-        "text": "整理今天所有对话内容，按 MEMORY.md 的分区结构（[代码排查]、[配表]、[数值]、[系统设计]）归类更新对应分区，有新的复盘也要写进去。更新完后执行：cd /root/.openclaw/workspace && git add MEMORY.md && git commit -m 'daily: 2026-03-19' && git push"
+        "text": "整理今天所有对话内容，按 MEMORY.md 的分区结构（[代码排查]、[配表]、[数值]、[系统设计]）归类更新对应分区，有新的复盘也要写进去。编辑策略：优先按分区标记做精确追加；若精确替换未命中，则回退为读取全文→在对应分区标记下追加→write 覆盖，不再抛出 warning。更新完后执行：cd /root/.openclaw/workspace && git add MEMORY.md && git commit -m 'daily: $(date +%F)' && git push"
       },
       "state": {
         "nextRunAtMs": 1774024200000,
@@ -146,13 +146,13 @@
       "updatedAtMs": 1773977941456,
       "schedule": {
         "kind": "cron",
-        "expr": "15 21 * * 1-5"
+        "expr": "0 21 * * 1-5"
       },
       "sessionTarget": "main",
       "wakeMode": "now",
       "payload": {
         "kind": "systemEvent",
-        "text": "日报生成任务：\n回顾今天所有分区的对话内容，以第一人称自然语言输出今日日报，直接发送给哥。\n\n格式要求：\n- 标题：📋 YYYY-MM-DD\n- 正文：按 1. 2. 3. 分点，每点一句话，所有分区内容打散混排，不按分区分组\n- 以实际解决的问题和完成的工作为主\n- 不提运维/定时任务/系统配置类工作\n- 不写字段名、配置名、具体参数，用自然语言描述\n- 不写分区标题（不写「代码排查」「数值讨论」等）\n- 第一人称，不说'帮你'，直接说做了什么\n- 简洁，每点不超过两句话\n\n写完后通过 message 工具发送给哥（channel: hub-channel）"
+        "text": "日报生成任务：\n\n第一步：回顾今天完整对话（从 00:00 到现在），补全 memory/YYYY-MM-DD.md 中遗漏的内容（立项讨论、技术问答、bug 提交等），确保日记完整后再生成日报。\n\n第二步：以第一人称自然语言输出今日日报，通过 message 工具发送给哥（channel: hub-channel）。\n\n格式要求：\n- 标题：📋 YYYY-MM-DD\n- 正文：按 1. 2. 3. 分点，每点一句话，所有内容打散混排，不按分区分组\n- bug 提交类：只写一句话概括（如「测试了海妖相关界面并提交了若干 bug」），不逐条列出\n- 立项讨论、技术问答等内容也要纳入\n- 不提运维/定时任务/系统配置类工作\n- 不写字段名、配置名、具体参数，用自然语言描述\n- 第一人称，不说'帮你'，直接说做了什么\n- 简洁，每点不超过两句话"
       },
       "state": {
         "nextRunAtMs": 1774012500000
