@@ -475,25 +475,28 @@
 ## 全局工具权限
 
 ### Google Sheets 访问
-- **token 路径：** `/root/.openclaw/workspace/google_token.json`
-- **账号：** xieyuntian@nibirutech.com
-- **权限范围：** spreadsheets（读写）、drive、documents（2026-04-02 扩权，已更新 token）
-- **client_secret 路径：** `/root/.openclaw/dingtalk-files/1773929201_client_secret_2_380293845993-4atkpamq39id7q8665m31ek9023tf4ii.apps.googleusercontent.com(1).json`
+- **方式：** Service Account（2026-04-13 切换，不再用 OAuth token，永不过期）
+- **Service Account 邮箱：** `openclaw-sheets@disco-glow-489611-j8.iam.gserviceaccount.com`
+- **密钥文件路径：** `/root/.openclaw/dingtalk-files/1776051556_disco-glow-489611-j8-894840eba97b.json`
+- **权限说明：** 需要操作的表/文档必须单独共享给上述邮箱（编辑者权限），Drive 层面的共享文件夹权限不会自动覆盖个人表
 - **使用方式：**
 ```python
-from google.oauth2.credentials import Credentials
+from google.oauth2 import service_account
 from googleapiclient.discovery import build
-import json
 
-with open('/root/.openclaw/workspace/google_token.json') as f:
-    t = json.load(f)
-creds = Credentials(token=t['token'], refresh_token=t['refresh_token'],
-    token_uri=t['token_uri'], client_id=t['client_id'],
-    client_secret=t['client_secret'], scopes=t['scopes'])
+creds = service_account.Credentials.from_service_account_file(
+    '/root/.openclaw/dingtalk-files/1776051556_disco-glow-489611-j8-894840eba97b.json',
+    scopes=[
+        'https://www.googleapis.com/auth/spreadsheets',
+        'https://www.googleapis.com/auth/drive',
+        'https://www.googleapis.com/auth/documents'
+    ]
+)
 service = build('sheets', 'v4', credentials=creds)
 # 读取：service.spreadsheets().values().get(spreadsheetId=ID, range='Sheet名').execute()
 ```
-- **注意：** token 会自动用 refresh_token 续期，无需重新授权
+- **已共享的表：** `1S9UEAUjiVdcNmvnno2rkEGbpMQ8eLBxhOrYvv7vL8Xc`（1427_x6_image_dialogue）
+- **旧 OAuth token：** `/root/.openclaw/workspace/google_token.json`（已废弃，保留备用）
 
 ### Datain API 配置（2026-04-02 首次配置）
 - **API Key：** 43ac2313-714c-4756-b6fa-ca4763ca9059
@@ -551,6 +554,7 @@ service = build('sheets', 'v4', credentials=creds)
 - **2026-04-10 datain-skill cache 只读问题：** `/opt/shared-skills/datain-skill` 目录只读，直接执行脚本时 cache 写入报 OSError → 兜底：cp -r 到 /tmp/datain-skill，修改 assets/configs.json 的 cache_dir 为 /tmp/datain-cache/ 后执行，后续每次调用 datain-skill 都走这个路径
 - **2026-04-10 内网工具访问限制：** 哥询问能否调用 voiceclone.tap4fun.com 生成语音，该域名解析到内网 IP，OpenClaw 沙箱无法访问 → 需要哥提供 API 接口文档或抓包参数才能代为调用；内网服务统一走这个方式处理
 - **2026-04-11 onehub skill 缺失：** 哥要申请 OneHub Key，/opt/shared-skills/onehub/SKILL.md 不存在 → 直接引导去网页申请；后续如需自动化创建 Key，需要先确认 onehub skill 是否已安装或找数据部获取 API 文档
+- **2026-04-13 长任务未用子 agent：** Google Sheets 读两张表+构建索引+匹配+写回，直接 exec 跑完，未 spawn 子 agent → 规则确认：涉及"读多个外部数据源 + 处理 + 写回"的任务，即使单次能跑完，也应 spawn 子 agent 保证进度可见、主 session 不阻塞。判断标准：预估超过 2 个 exec 步骤 + 有外部 API 调用 → 子 agent
 
 ## 数据检查经验积累
 
