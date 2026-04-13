@@ -337,6 +337,30 @@
 
 ### 工作记录
 
+**2026-04-13：躺平项目 NPC6~10 全套动画资源生成**
+- 文件重命名：NPC6~10 的 PNG 文件按规范重命名（尾号小的加 _stand 后缀，尾号大的为普通版）
+- 呼吸视频（NPC_X.mp4）：seadance 2.0 首尾帧模式，黑色背景，RGBA→RGB 转换后提交，5个全部成功
+- Walk 视频（NPC_X_walk.mp4）：kling 首帧+尾帧+元素参考，NPC_X_black.png 首尾帧，NPC_X_walk_black.png 元素参考，prompt 强调居中+无折返；NPC7 因居中问题重跑2次
+- Reject 视频（NPC_X_reject.mp4）：kling 首帧+尾帧+参考视频，NPC_3_reject.mp4 作参考，3:4比例，因首帧不严格重跑一次（加尾帧锁定）
+- SBS 导出任务：22:30 cron 触发，子 agent 超时（20个视频串行太慢），待续
+- 关键经验：scp 传输大文件会截断（200K），必须用 SSH python 二进制方式传输；RGBA 图片需转 RGB 再提交视频生成
+
+**2026-04-13：TTS 批量语音生成（躺平项目对话音频）**
+- 表格：Google Sheets 1S9UEAUjiVdcNmvnno2rkEGbpMQ8eLBxhOrYvv7vL8Xc 工作表2，B列文件名、C列角色、D列文本
+- 输出目录：E:\A2\tangping\client\client\Assets\Game\Res\Audio\Dialogue\
+- 最终角色音色映射：
+  - 伊森/亚瑟 → 11labs/5319/oscarnew
+  - 总部/广播 → 11labs/1105/广播（voice_id=578）
+  - 沃特博士/??? → 11labs/1096/发行-P2-Male-test
+  - 艾什 → 11labs/2013/X3-Amina
+  - 玛莎 → 11labs/5319/darcynew
+  - 丽娜 → 11labs/2013/X3-Alice
+  - 流浪幸存者 → 11labs/2013/X3-Sloane
+  - 僵尸 → 跳过（❌）
+- TTS API 调用方式：POST /api/tts，voice_id 传 578 占位，voice_name 传完整字符串如 "11labs/5319/oscarnew"
+- 第一次跑24条（未含伊森/总部），后更新映射重跑56条全部成功，E列全部回写
+- AI 日报 cron 已修复：触发后直接在对话里回复中文摘要，不再用 message 工具推送
+
 **2026-04-08：躺平项目 NPC Walk 动画资源生成（NPC3/4/5）**
 - 任务：为前期检疫玩法 NPC3、NPC4、NPC5 生成 walk 动画全套资源
 - 产出：每个 NPC 生成 walk 参考图（PNG）、walk 视频（MP4）、去背景视频（nobg.mp4）、SBS 对比视频（sbs.mp4）
@@ -555,6 +579,10 @@ service = build('sheets', 'v4', credentials=creds)
 - **2026-04-10 内网工具访问限制：** 哥询问能否调用 voiceclone.tap4fun.com 生成语音，该域名解析到内网 IP，OpenClaw 沙箱无法访问 → 需要哥提供 API 接口文档或抓包参数才能代为调用；内网服务统一走这个方式处理
 - **2026-04-11 onehub skill 缺失：** 哥要申请 OneHub Key，/opt/shared-skills/onehub/SKILL.md 不存在 → 直接引导去网页申请；后续如需自动化创建 Key，需要先确认 onehub skill 是否已安装或找数据部获取 API 文档
 - **2026-04-13 长任务未用子 agent：** Google Sheets 读两张表+构建索引+匹配+写回，直接 exec 跑完，未 spawn 子 agent → 规则确认：涉及"读多个外部数据源 + 处理 + 写回"的任务，即使单次能跑完，也应 spawn 子 agent 保证进度可见、主 session 不阻塞。判断标准：预估超过 2 个 exec 步骤 + 有外部 API 调用 → 子 agent
+- **2026-04-13 SBS 任务串行超时：** 20个视频扣背景+SBS导出，每个约5-8分钟，串行跑30分钟只完成1个就超时 → 改进：超过5个视频的批量异步任务必须按文件夹拆分多个子 agent 并行跑，不能串行
+- **2026-04-13 cron once 格式不支持：** 直接写 jobs.json 用 kind:once 导致 cron 报错被禁用 → 正确方式：用 `openclaw cron add --at "ISO时间+时区"` 命令添加一次性任务，不要手动改 json
+- **2026-04-13 scp 传输大文件截断：** scp 传 Windows 大图片只得到 200K 截断文件 → 必须用 `ssh python -c "sys.stdout.buffer.write(open(...,'rb').read())"` 二进制方式传输，scp 在中文路径下不可靠
+- **2026-04-13 TTS voice_name 用法：** TTS API voice_id 只接受整数，但传 voice_id=578（占位）+ voice_name="11labs/5319/oscarnew" 可正确路由到指定音色
 
 ## 数据检查经验积累
 
