@@ -361,6 +361,14 @@
 - 第一次跑24条（未含伊森/总部），后更新映射重跑56条全部成功，E列全部回写
 - AI 日报 cron 已修复：触发后直接在对话里回复中文摘要，不再用 message 工具推送
 
+**2026-04-14：躺平项目游戏 app icon 生成**
+- 任务：为躺平项目前期检疫玩法生成 app icon，主题为小女孩+检疫扫描仪+末日道德困境
+- 参考图：游戏截图2张 + 哥筛选满意样本8张，共10张全部带入 nanobanana --images
+- 迭代过程：第一批 SeedDream 组图（风格差异大）→ 第二批 nanobanana+参考图（统一末日基调）→ 第三批聚焦检疫检查/道德抉择场景
+- 第三批构图方向：PASS/DENY 决策屏、脸部感染扫描线、隔离玻璃绝望、眼睛倒映 INFECTED 判决、路口抉择等
+- 产出：三批九宫格，路径 /tmp/ai-art-output/icon_grid_final.png / icon_grid_v2.png / icon_grid_v3.png
+- 经验：nanobanana 多张 --images 效果好；日报格式确认：AI 新闻不计入日报，同类任务合并为一条
+
 **2026-04-08：躺平项目 NPC Walk 动画资源生成（NPC3/4/5）**
 - 任务：为前期检疫玩法 NPC3、NPC4、NPC5 生成 walk 动画全套资源
 - 产出：每个 NPC 生成 walk 参考图（PNG）、walk 视频（MP4）、去背景视频（nobg.mp4）、SBS 对比视频（sbs.mp4）
