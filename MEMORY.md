@@ -216,6 +216,15 @@
 
 ### 复盘
 - Property.xlsx 有保护无法直接读取，遇到连续2次读取失败应立即告知哥，不要继续无效尝试
+
+**2026-04-15：GitLab 受保护分支推送被拒**
+- 现象：push 报 pre-receive hook declined + not allowed to push to protected branches
+- 原因：master 分支受保护，当前账号无直接推送权限
+- 解决：走 MR 流程，或联系仓库管理员在 Settings → Repository → Protected Branches 开放权限
+
+**2026-04-15：内网 Jenkins 无法直接访问**
+- 内网 IP 被沙箱拦截，需通过 SSH 跳板机 curl 触发构建
+- 待哥提供 Job 名称和参数后继续
 - 早间播报任务（web_fetch GitHub + write MEMORY.md）需注意 write 工具的 content 参数是必填的，不能只传 file_path
 - **2026-03-30 子 agent 结果不完整：** 多个 Bug 创建子 agent 只返回中间状态（"Bug 创建成功，现在上传截图"），未给出 issue key 和链接 → 改进：子 agent 完成后主 agent 校验结果是否含 issue key，缺失时主动查 Jira 最近创建记录（jql: project=X3NEW ORDER BY created DESC）补全
 - **2026-03-26 规则确认：** 哥直接描述问题现象 = 提 bug，不做代码排查和修复，直接开子 agent 提 Jira
