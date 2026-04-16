@@ -18,6 +18,18 @@
 
 ---
 
+## 分区 Agent Session 信息
+
+| 分区 | Agent ID | Session Key |
+|---|---|---|
+| 数值讨论 | mathematicaldesigner | agent:mathematicaldesigner:hub-channel:group:cidg4t2v/p5vkspdtdd2mhoaw== |
+
+- 数值讨论群 Session ID: 86eb04ca-0779-422d-b5c0-7053b568e3da
+- 跨 agent 通信已打通（2026-04-16），可直接用 sessions_send 联系
+- 数值讨论工作已于 2026-04-16 正式交接给 mathematicaldesigner agent
+
+---
+
 ## 分区群说明
 
 | 分区 | 群 | cron | GitHub 分区 |
@@ -228,6 +240,19 @@
 - 早间播报任务（web_fetch GitHub + write MEMORY.md）需注意 write 工具的 content 参数是必填的，不能只传 file_path
 - **2026-03-30 子 agent 结果不完整：** 多个 Bug 创建子 agent 只返回中间状态（"Bug 创建成功，现在上传截图"），未给出 issue key 和链接 → 改进：子 agent 完成后主 agent 校验结果是否含 issue key，缺失时主动查 Jira 最近创建记录（jql: project=X3NEW ORDER BY created DESC）补全
 - **2026-03-26 规则确认：** 哥直接描述问题现象 = 提 bug，不做代码排查和修复，直接开子 agent 提 Jira
+
+**2026-04-16：org-daily-report + dws skill 安装**
+- 安装了 org-daily-report 和 dingtalk-workspace 两个 skill，修复脚本硬编码 CLI 路径（/home/clawd/.local/bin/dws.local → /usr/local/bin/dws）
+- dws 登录的是哥自己的账号，不是管理员账号，只能看到有权限的项目组数据（X16）
+- dws 发钉钉消息：`dws chat message send-by-bot --users "userId" --robot-code "dingjffl0r11jszonmsc" --title "标题" --text "内容" -y`，--title 必填，发群用 --group
+
+**2026-04-16：跨 agent 通信打通**
+- 问题根因：main agent 在沙箱里运行，visibility 被强制降级到 tree，无法跨 agent
+- 解决：在 openclaw.json 的 agents.list 里给 main agent 加 `"sandbox": {"mode": "off"}`，无需重启立即生效
+- 两项配置缺一不可：tools.sessions.visibility=all + tools.agentToAgent.enabled=true
+- sessions_send 返回 timeout 不代表失败，对方可能仍在处理；返回 normal closure 说明 gateway 连通但路由有问题
+- 跨 agent 发消息要用群 session key，不是 main session key，否则对方在钉钉里看不到
+- 数值讨论工作已于 2026-04-16 正式交接给 mathematicaldesigner agent
 
 ---
 
