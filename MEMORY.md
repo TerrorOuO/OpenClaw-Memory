@@ -23,6 +23,9 @@
 | 分区 | Agent ID | Session Key |
 |---|---|---|
 | 数值讨论 | mathematicaldesigner | agent:mathematicaldesigner:hub-channel:group:cidg4t2v/p5vkspdtdd2mhoaw== |
+| 配置编辑 | configassistant | agent:configassistant:hub-channel:group:cidnxuiYiCtVfGu+UX7EVfSpw== |
+| 系统设计 | systemdesigner | agent:systemdesigner:hub-channel:group:cidNBq6YL/Iz76NLBw6DSfXHw== |
+| 代码排查 | programmer | agent:programmer:hub-channel:group:cidRgrkFxlmsUwaYu3IEmeBvQ== |
 
 - 数值讨论群 Session ID: 86eb04ca-0779-422d-b5c0-7053b568e3da
 - 跨 agent 通信已打通（2026-04-16），可直接用 sessions_send 联系
@@ -253,6 +256,13 @@
 - sessions_send 返回 timeout 不代表失败，对方可能仍在处理；返回 normal closure 说明 gateway 连通但路由有问题
 - 跨 agent 发消息要用群 session key，不是 main session key，否则对方在钉钉里看不到
 - 数值讨论工作已于 2026-04-16 正式交接给 mathematicaldesigner agent
+
+**2026-04-17：四个分区 agent 全部完成交接**
+- 配置编辑（configassistant）、系统设计（systemdesigner）、代码排查（programmer）交接完成
+- 各 agent 已设置每天 21:00/23:00 向渡汇报，不直接发给哥
+- 各 agent 名字候选：系统设计倾向「枢」，数值讨论倾向「衡」，代码排查倾向「溯」，配置编辑待确认
+- Google Sheets 永久授权方案已发给由一功：换用 Service Account 替代 OAuth token，永不过期，每个表单独共享给 Service Account 邮箱
+- sessions_send 并发超时根因确认：多条消息同时发送时 gateway 排队阻塞，改为串行发送后稳定
 
 ---
 
