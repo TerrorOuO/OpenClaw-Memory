@@ -26,6 +26,7 @@
 | 配置编辑 | configassistant | agent:configassistant:hub-channel:group:cidnxuiYiCtVfGu+UX7EVfSpw== |
 | 系统设计 | systemdesigner | agent:systemdesigner:hub-channel:group:cidNBq6YL/Iz76NLBw6DSfXHw== |
 | 代码排查 | programmer | agent:programmer:hub-channel:group:cidRgrkFxlmsUwaYu3IEmeBvQ== |
+| 数据分析 | datascientist | agent:datascientist:hub-channel:group:cid4/lysbu2XHzTjYvUltNIyQ== |
 
 - 数值讨论群 Session ID: 86eb04ca-0779-422d-b5c0-7053b568e3da
 - 跨 agent 通信已打通（2026-04-16），可直接用 sessions_send 联系
@@ -263,6 +264,15 @@
 - 各 agent 名字候选：系统设计倾向「枢」，数值讨论倾向「衡」，代码排查倾向「溯」，配置编辑待确认
 - Google Sheets 永久授权方案已发给由一功：换用 Service Account 替代 OAuth token，永不过期，每个表单独共享给 Service Account 邮箱
 - sessions_send 并发超时根因确认：多条消息同时发送时 gateway 排队阻塞，改为串行发送后稳定
+
+**2026-04-20：数据分析分区新建 + iGame AICS 监控**
+- 新建数据分析分区，agent ID: datascientist，群 session key: agent:datascientist:hub-channel:group:cid4/lysbu2XHzTjYvUltNIyQ==
+- datascientist 完成 X6 流失漏斗分析（1116人，最大流失点重复盖章教学 -29%）、打通 Datain 数据链路、跑 4.01-4.03 四条 SQL
+- 日期规则确认：哥给日期范围 = register_time 范围，partition_date/created_at 只设下限不设上限
+- 搞定 iGame X6 工单查询权限（gameId=1105），搞建 aics-monitor.py 每5分钟轮询新工单和玩家新回复，有变化通过 dws 推送
+- 回复接口：customer/chat/replyTicket，必填参数：ticketId/content/messageType/resolved
+- 状态文件：~/.openclaw/aics-monitor-state.json
+- 日报应包含各分区 agent 汇报摘要，即使无更新也要说明
 
 ---
 
