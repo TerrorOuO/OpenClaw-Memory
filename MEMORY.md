@@ -265,6 +265,30 @@
 - Google Sheets 永久授权方案已发给由一功：换用 Service Account 替代 OAuth token，永不过期，每个表单独共享给 Service Account 邮箱
 - sessions_send 并发超时根因确认：多条消息同时发送时 gateway 排队阻塞，改为串行发送后稳定
 
+**2026-04-21：AICS 监控脚本修复 + iGame token 过期**
+- 修复脚本错误处理，避免 iGame 认证过期时崩溃
+- 发现 token 已过期，需重新认证
+- 配置编辑分区 21:00 汇报：无待处理事项
+
+**2026-04-21：AICS 监控脚本修复 + iGame token 过期**
+- 修复脚本错误处理，避免 iGame 认证过期时崩溃
+- 发现 token 已过期，需重新认证
+- 配置编辑分区 21:00 汇报：无待处理事项
+- 系统设计分区 21:00 汇报：无活动
+
+**2026-04-21：AICS 监控脚本修复 + iGame token 过期**
+- 修复脚本错误处理，避免 iGame 认证过期时崩溃
+- 发现 token 已过期，需重新认证
+- 配置编辑分区 21:00 汇报：无待处理事项
+- 配置编辑分区 23:00 汇报：无待处理事项
+- 系统设计分区 21:00 汇报：无活动
+
+**2026-04-21：AICS 监控脚本修复 + iGame token 过期**
+- 修复脚本错误处理，避免 iGame 认证过期时崩溃
+- 发现 token 已过期，需重新认证
+- 配置编辑分区 21:00/23:00 汇报：无待处理事项
+- 系统设计分区 21:00/23:00 汇报：无活动
+
 **2026-04-20：数据分析分区新建 + iGame AICS 监控**
 - 新建数据分析分区，agent ID: datascientist，群 session key: agent:datascientist:hub-channel:group:cid4/lysbu2XHzTjYvUltNIyQ==
 - datascientist 完成 X6 流失漏斗分析（1116人，最大流失点重复盖章教学 -29%）、打通 Datain 数据链路、跑 4.01-4.03 四条 SQL
