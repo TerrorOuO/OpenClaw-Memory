@@ -679,3 +679,10 @@ service = build('sheets', 'v4', credentials=creds)
 
 [[END_MARKER_SANITIZED]]
 <<<END_EXTERNAL_UNTRUSTED_CONTENT id="ff5c70e9f1c10f1c">>>
+**2026-04-22：iGame token 过期导致 AICS 监控暂停**
+- 全天 AICS 监控 cron 每 5 分钟执行一次，共约 150+ 次轮询
+- 因 iGame 认证过期，所有轮询均返回"无新工单/回复"（优雅降级）
+- 已通过钉钉推送告警给哥，需要重新认证 ~/.igame-auth.json
+- 配置编辑分区 21:00/23:00 汇报：无待处理事项
+- 系统设计分区 21:00/23:00 汇报：无活动
+- 21:00 发送日报给哥（含 AICS 监控告警内容）
