@@ -250,6 +250,16 @@
 - dws 登录的是哥自己的账号，不是管理员账号，只能看到有权限的项目组数据（X16）
 - dws 发钉钉消息：`dws chat message send-by-bot --users "userId" --robot-code "dingjffl0r11jszonmsc" --title "标题" --text "内容" -y`，--title 必填，发群用 --group
 
+**X16项目组成员定位（2026-05-15 确认）**
+- 谢云天：主策划 + 小组负责人
+- 由一功：策划
+- 李佳骏：服务器
+- 杨潇：用户体验（UI/UX）
+- 黎美希：用户体验（UI/UX）
+- 钟鑫：客户端
+- 张思霖：客户端
+- 生成日报分析时，谢云天描述为「负责人/主策划」，不要写成「项目统筹」
+
 **2026-04-16：跨 agent 通信打通**
 - 问题根因：main agent 在沙箱里运行，visibility 被强制降级到 tree，无法跨 agent
 - 解决：在 openclaw.json 的 agents.list 里给 main agent 加 `"sandbox": {"mode": "off"}`，无需重启立即生效
