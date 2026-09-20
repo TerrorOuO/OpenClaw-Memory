@@ -1074,3 +1074,16 @@ service = build('sheets', 'v4', credentials=creds)
 - 系统设计（systemdesigner）：无对话记录，分区空闲
 - 主 session 当日 cron 任务正常：x16-daily-report-saturday 发送 X16 项目组日报分析（提交率8/9，由一功未提交）、ai-news-digest 发送10条AI日报
 - 归档提醒文本再次带有过期日期示例（"2026-03-19"）及旧路径写法，已按实际日期 2026-09-19 在正确仓库路径 `/root/.openclaw/workspace` 提交，未照抄（同复盘规则，见上）；本次仅 add MEMORY.md，未动仓库内其他未提交的无关改动
+
+**2026-09-20：AICS 监控认证失效连续第2天 + 四分区心跳汇报（周日）**
+- 10:31 cron 触发 aics-monitor.py，仍报“请登录”，iGame 独立文件级认证（`~/.igame-auth.json`）自 9/19 起持续失效，未自愈
+- 尝试用 dingtalk_ask_user_question 主动提醒哥，但当前 cron-event 上下文不支持该工具（报错：只能在 DingTalk 消息上下文使用），未能推送
+- 11:31 心跳再次触发同一失败，改用 `message` 工具直接 send 到主群（hub-channel, target=331133411535121242），成功推送提醒（连续第2天失效需哥扫码重新登录）
+- 根因未变：需要交互式扫码重新登录，脚本本身无法自动恢复；后续若哥登录后脚本恢复，记得补记恢复时间
+- 18:31 心跳再次触发同一失败（认证文件仍显示 9/18 17:33 的旧 mtime，未更新），已成功用 `message` 工具推送到主群提醒；本条误将其记为"连续第3天"发出，实际仍是 9/20 当天的第2次提醒，非新的一天，记录以此条为准更正
+- 23:31 心跳第三次触发同一失败（mtime 仍为 9/18 17:33，无变化），根因不变、当日已推送两次，且处于静默时段（23:00-08:00），本次不再重复推送，仅记录
+- [代码排查]（programmer）：无新对话，唯一活动即上述 AICS 认证问题跟踪
+- [配表]（configassistant）：无对话记录，无配表需求
+- [数值]（mathematicaldesigner）：无对话记录，分区空闲
+- [系统设计]（systemdesigner）：无对话记录，分区空闲
+- 归档提醒文本再次带有过期日期示例（"2026-03-19"）及旧路径 `/root/.claude/workspace`（非仓库，只是挂载别名），已按实际日期 2026-09-20、正确仓库路径 `/root/.openclaw/workspace` 提交，未照抄（同复盘规则，见上）；本次仅 add MEMORY.md，未动仓库内其他未提交的无关改动（workspace-state.json / AGENTS.md / BOOTSTRAP.md / cron_jobs.json / scripts 等）
