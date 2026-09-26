@@ -1154,3 +1154,18 @@ service = build('sheets', 'v4', credentials=creds)
 - [系统设计]（systemdesigner）：无对话记录，分区空闲
 - 复盘：无新增复盘，沿用既有规则（同一失败信息不重复推送、静默时段不打扰、优先用 `integration_status` 而非本地文件时间戳判断接入状态）均正常生效；9/23 汇总缺口暂无法回溯，已知悉
 - 归档提醒文本仍带有过期日期示例（"2026-03-19"），已按实际日期 2026-09-24、正确仓库路径 `/root/.openclaw/workspace` 提交，未照抄
+
+**2026-09-25：四分区日终汇总（周五）**
+- [代码排查]（programmer）：全天无新对话，AICS/iGame 监控今日心跳未见异常触发记录
+- [配表]（configassistant）：无对话记录，无配表需求
+- [数值]（mathematicaldesigner）：无对话记录，分区空闲
+- [系统设计]（systemdesigner）：无对话记录，分区空闲
+- 主 session：09:01 AI 日报已推送；09:25 X16 项目组日报分析已推送（2026-09-24，提交率 7/8，用户体验组零提交需跟进）
+- 复盘：无新增
+
+**2026-09-26：四分区日终汇总（周六）**
+- [代码排查]（programmer）：全天无新对话；`integration_status` 复核 igame/jira 仍均 `connected:false`，接入问题持续未解决，未新增打扰推送（沿用不重复推送规则）
+- [配表]（configassistant）：无对话记录，无配表需求
+- [数值]（mathematicaldesigner）：无对话记录，分区空闲
+- [系统设计]（systemdesigner）：无对话记录，分区空闲
+- 复盘：日终归档心跳提醒文本携带过期日期（"2026-03-19"）和错误路径（误写 `/root/.openclaw/workspace`），执行时已核对并使用真实日期与真实仓库路径 `/root/.openclaw/workspace`，避免机械照抄模板内容导致提交信息或路径出错
